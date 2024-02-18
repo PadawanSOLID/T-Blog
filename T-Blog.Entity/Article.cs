@@ -6,6 +6,6 @@
         public string Content { get; set; }
         public int Channel_Id { get; set; }
         public int CoverType { get; set; }
-        public string[] Covers { get; set; }
+        public string[] Images { get; set; }
     }
 }

@@ -14,6 +14,7 @@ const userStore = createSlice({
         },
         setUserInfo(state, action) {
             state.userInfo = action.payload;
+            console.log(state.userInfo);
         },
         clearUserInfo(state) {
             state.token = '';
@@ -39,7 +40,6 @@ const fetchUserInfo = () => {
     return async (dispatch) => {
         try {
             const res = await getProfileAPI();
-            console.log(res);
             dispatch(setUserInfo(res))
         }
         catch {

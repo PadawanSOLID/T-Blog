@@ -30,7 +30,6 @@ const items = [
   getItem('Article', '/article', <FileTextFilled />),
   getItem('Publish', '/publish', <EditFilled />),
   getItem('EFEM', '/efem', <HomeOutlined />),
-
   getItem('Recipe', '/recipe', <EditOutlined />),
   getItem('SEM', '/sem', <AimOutlined />),
   getItem('Alarm', '/alarm', <AlertOutlined />),

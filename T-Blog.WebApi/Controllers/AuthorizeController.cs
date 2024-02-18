@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using T_Blog.Entity;
 using T_Blog.WebApi.Models;
 
 namespace T_Blog.WebApi.Controllers
@@ -45,7 +46,8 @@ namespace T_Blog.WebApi.Controllers
         public IActionResult Profile()
         {
             var name= this.User.FindFirst(ClaimTypes.Name).Value;
-            return Ok(name);    
+            User user = new() { Name = name ,Mobile=name};
+            return Ok(user);    
         }
     }
     public class LoginData

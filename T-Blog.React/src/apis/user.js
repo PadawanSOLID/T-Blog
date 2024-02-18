@@ -2,7 +2,7 @@ import { request } from "../utils";
 
 export function loginAPI(formData) {
     return request({
-        url: 'Authorize/Login',
+        url: 'authorize/Login',
         method: 'POST',
         data: formData
     })
