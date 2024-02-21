@@ -1,4 +1,8 @@
-const Article=()=>{
-    return <div>Article</div>
+
+
+
+
+const Article = () => {
+   return <div>Article</div>
 }
 export default Article;
