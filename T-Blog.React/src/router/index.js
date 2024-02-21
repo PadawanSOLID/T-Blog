@@ -8,7 +8,7 @@ import SEM from "../pages/SEM";
 import Alarm from "../pages/Alarm";
 import Config from "../pages/Config";
 import Article from "../pages/Article";
-import Publish from "../pages/Publish";
+import Publish from "../pages/Pub";
 import Home from "../pages/Home";
 const router =createBrowserRouter([{
     path: '/',
