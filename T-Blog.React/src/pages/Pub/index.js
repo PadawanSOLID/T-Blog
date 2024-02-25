@@ -1,18 +1,33 @@
-import { Breadcrumb, Button, Card, Form, Input, Select, Space } from "antd"
+import { Breadcrumb, Button, Card, Form, Input, Radio, Select, Space, Upload, message } from "antd"
 import './index.scss'
 import { useEffect, useState } from "react";
-import { getChannelAPI } from "../../apis/article";
+import { createArticleAPI, getChannelAPI } from "../../apis/article";
 import { Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css'
 import ReactQuill from "react-quill";
+import { PlusOutlined } from "@ant-design/icons";
 const { Option } = Select
 
 const Publish = () => {
-    const onFinish=(formData)=>{
-        
+    const onFinish = async (formData) => {
+      if(imageList.length!==imageType)return message.warning('封面图片');
+        const { title, content, channel_id } = formData;
+        const reqData = {
+            title,
+            content,
+            cover: {
+                type: imageType,
+                images:imageList.map(i=>i.response)
+            },
+            channel_id
+        };
+        console.log(reqData);
+        const res = await createArticleAPI(reqData);
+        console.log(res);
     }
     const [channelList, setChannelList] = useState([]);
-
+    const [imageList, setImageList] = useState([]);
+    const[imageType,setImageType]=useState(0);
     useEffect(() => {
         const channels = async () => {
             const res = await getChannelAPI();
@@ -20,6 +35,14 @@ const Publish = () => {
         }
         channels();
     }, [])
+
+    const onchange = (value) => {
+        console.log('Uploading...', value);
+        setImageList(value.fileList);
+    }
+const onTypeChange=(e)=>{
+    setImageType(e.target.value);
+}
     return <Card
         className="publish"
         title={
@@ -29,10 +52,10 @@ const Publish = () => {
             ]} />
         }>
         <Form
-        onFinish={onFinish}
+            onFinish={onFinish}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 16 }}
-            initialValues={{ type: 1 }}>
+            initialValues={{ type: 0 }}>
             <Form.Item
                 name='title'
                 label="标题"
@@ -51,6 +74,26 @@ const Publish = () => {
                     })}
                 </Select>
             </Form.Item>
+            <Form.Item label='封面'>
+                <Form.Item name='type'>
+                    <Radio.Group onChange={onTypeChange}>
+                        <Radio value={1}>单图</Radio>
+                        <Radio value={3}>三图</Radio>
+                        <Radio value={0}>无图</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                {imageType>0 && <Upload
+                    listType="picture-card"
+                    showUploadList
+                    action='http://localhost:5225/api/Upload/UploadCovers'
+                    onChange={onchange} maxCount={imageType}>
+                
+                    <div style={{ marginTop: 8 }}>
+                        <PlusOutlined />
+                    </div>
+                </Upload>}
+            </Form.Item>
+
             <Form.Item
                 label='内容'
                 name='content'

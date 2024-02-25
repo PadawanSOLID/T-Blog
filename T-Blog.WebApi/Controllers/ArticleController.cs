@@ -28,7 +28,7 @@ namespace T_Blog.WebApi.Controllers
             return Ok(ChannelList);
         }
         public int Seed = 0;
-        public List<Article> Articles { get; set; }
+        public List<Article> Articles { get; set; } = new();
 
         [HttpPost]
         public IActionResult Create([FromBody] ArticleData articleData)
