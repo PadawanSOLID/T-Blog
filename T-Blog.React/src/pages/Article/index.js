@@ -59,3 +59,4 @@ const Article = () => {
       </div>
    )
 }    
+export default Article;
