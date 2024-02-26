@@ -1,15 +1,22 @@
 import { request } from "../utils";
 
-export function getChannelAPI(){
+export function getChannelAPI() {
     return request({
-        url:'Article/Channels',
-        method:'GET'
+        url: 'Article/Channels',
+        method: 'GET'
     })
 }
-export function createArticleAPI(data){
+export function createArticleAPI(data) {
     return request({
-        url:'Article/Create',
-        method:'POST',
+        url: 'Article/Create',
+        method: 'POST',
         data
+    })
+}
+export function getArticleListAPI(params) {
+    return request({
+        url: 'Article/Articles',
+        method: 'GET',
+        params
     })
 }

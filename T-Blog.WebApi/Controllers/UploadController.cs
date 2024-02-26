@@ -18,8 +18,7 @@ namespace T_Blog.WebApi.Controllers
                 await fs.CopyToAsync(fs);
                 return Ok(path);
             }
-            return NotFound("No file!");
-            
+            return NotFound("No file!");  
         }
     }
 }

@@ -1,11 +1,12 @@
 import { Breadcrumb, Button, Card, Form, Input, Radio, Select, Space, Upload, message } from "antd"
 import './index.scss'
-import { useEffect, useState } from "react";
-import { createArticleAPI, getChannelAPI } from "../../apis/article";
+import { useState } from "react";
+import { createArticleAPI } from "../../apis/article";
 import { Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css'
 import ReactQuill from "react-quill";
 import { PlusOutlined } from "@ant-design/icons";
+import { useChannel } from "../../hooks/useChannel";
 const { Option } = Select
 
 const Publish = () => {
@@ -25,16 +26,11 @@ const Publish = () => {
         const res = await createArticleAPI(reqData);
         console.log(res);
     }
-    const [channelList, setChannelList] = useState([]);
+
     const [imageList, setImageList] = useState([]);
     const[imageType,setImageType]=useState(0);
-    useEffect(() => {
-        const channels = async () => {
-            const res = await getChannelAPI();
-            setChannelList(res);
-        }
-        channels();
-    }, [])
+ 
+    const{channelList}=useChannel();
 
     const onchange = (value) => {
         console.log('Uploading...', value);

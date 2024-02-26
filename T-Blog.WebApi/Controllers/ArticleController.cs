@@ -27,6 +27,13 @@ namespace T_Blog.WebApi.Controllers
         {
             return Ok(ChannelList);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Articles(int status=-1,int channel_id=-1,string begin_pubdate=null,string end_pubdate=null,int page=1,int per_page = 10)
+        {
+            
+            return IActionResult<
+        }
         public int Seed = 0;
         public List<Article> Articles { get; set; } = new();
 

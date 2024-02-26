@@ -1,20 +1,30 @@
-import { Breadcrumb, Card, Form, Radio, Select,Button,RangePicker } from "antd";
+import { Breadcrumb, Card, Form, Radio, Select, Button, DatePicker } from "antd";
 import { useEffect, useState } from "react";
+import { useChannel } from "../../hooks/useChannel";
 import { Link } from "react-router-dom";
-import { getChannelAPI } from "../../apis/article";
-
-const { Option } = Select
-
+import locale from 'antd/es/date-picker/locale/zh_CN'
+import { getArticleListAPI } from "../../apis/article";
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const Article = () => {
-   const [channelList, setChannelList] = useState([]);
-   useEffect(() => {
-      const getChannelList = async () => {
-         const res = await getChannelAPI();
-         setChannelList(res);
+   const columns = [{
+      title: '封面',
+      dataIndex: 'cover',
+      width: 120,
+      render: cover => {
+         return <img src={cover.iamges[0]} width={80} height={60} alt="" />
       }
-      getChannelList();
-   }, [])
+   }]
+   const { channelList } = useChannel();
+   const[list,setList]=useState([])
+   useEffect(()=>{
+const getList=async()=>{
+   const res=await getArticleListAPI();
+   setList(res);
+}
+getList();
+   },[])
    return (
       <div>
          <Card
@@ -42,21 +52,21 @@ const Article = () => {
                   <Select
                      placeholder='请选择文章频道'
                      style={{ width: 120 }}>
-                     {channelList.map(n => { return <Option>{n.name}</Option> })}
+                     {channelList.map(n => { return <Option value={n.id} key={n.id}>{n.name} </Option> })}
                   </Select>
                </Form.Item>
                <Form.Item
-               label='日期'
-               name='date'>
+                  label='日期'
+                  name='date'>
                   <RangePicker locale={locale} />
                </Form.Item>
                <Form.Item>
-                  <Button type='primary'  htmlType="submit" style={{marginLeft:40}}筛选></Button>
+                  <Button type='primary' htmlType="submit" style={{ marginLeft: 40 }}>筛选</Button>
                </Form.Item>
 
             </Form>
          </Card>
       </div>
    )
-}    
+}
 export default Article;
