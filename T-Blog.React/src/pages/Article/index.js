@@ -1,30 +1,120 @@
-import { Breadcrumb, Card, Form, Radio, Select, Button, DatePicker } from "antd";
+import { Breadcrumb, Card, Form, Radio, Select, Button, DatePicker, Table, Tag, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useChannel } from "../../hooks/useChannel";
 import { Link } from "react-router-dom";
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { getArticleListAPI } from "../../apis/article";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-
-const Article = () => {
-   const columns = [{
-      title: '封面',
-      dataIndex: 'cover',
-      width: 120,
-      render: cover => {
-         return <img src={cover.iamges[0]} width={80} height={60} alt="" />
-      }
-   }]
-   const { channelList } = useChannel();
-   const[list,setList]=useState([])
-   useEffect(()=>{
-const getList=async()=>{
-   const res=await getArticleListAPI();
-   setList(res);
+const status={
+   1:<Tag color="warning">待审核</Tag>,
+   2:<Tag color="success">审核通过</Tag>,
+   3:<Tag color='red'>审核失败</Tag>
 }
-getList();
-   },[])
+const Article = () => {
+   const columns = [
+      {
+         title: '封面',
+         dataIndex: 'cover',
+         width: 120,
+         render: cover => {return <img alt=""/>
+            // return <img src={cover.images[0]} width={80} height={60} alt="" />
+         }
+      }, {
+         title:'序号',
+         dataIndex:'id'
+      },{
+         title: '标题',
+         dataIndex: 'title',
+         width: 220
+      }, {
+         title: '状态',
+         dataIndex: 'status',
+         render: data => status[data]
+      },
+      {
+         title: '发布时间',
+         dataIndex: 'pubdate'
+      }, {
+         title: '阅读数',
+         dataIndex: 'read_count'
+      }, {
+         title: '评论数',
+         dataIndex: 'comment_count'
+      }, {
+         title: '点赞数',
+         dataIndex: 'like_count'
+      }, {
+         title: '操作',
+         render: data => {
+            return (
+               <Space size={"middle"}>
+                  <Button type="primary" shape="circle" icon={<EditOutlined />} />
+                  <Button type="primary" danger shape="circle" icon={<DeleteOutlined />} />
+               </Space>
+            )
+         }
+      }
+   ]
+   const data=[
+      {
+         id:'8218',
+         comment_count:0,
+         cover:{
+            iamges:[],
+         },
+         like_count:0,
+         pubdate:'2019-03-11 09:00:00',
+         read_count:2,
+         status:2,
+         title:'solution'
+      },{
+         id:'8218',
+         comment_count:0,
+         cover:{
+            iamges:[],
+         },
+         like_count:0,
+         pubdate:'2019-03-11 09:00:00',
+         read_count:2,
+         status:1,
+         title:'solution'
+      },{
+         id:'8218',
+         comment_count:0,
+         cover:{
+            iamges:[],
+         },
+         like_count:0,
+         pubdate:'2019-03-11 09:00:00',
+         read_count:2,
+         status:3,
+         title:'solution'
+      }
+   ]
+   const onFinish = (formData) => {
+
+   }
+   const { channelList } = useChannel();
+   const [list, setList] = useState([])
+   const [count, setCount] = useState(0);
+   useEffect(() => {
+      const getList = async () => {
+         const param = {
+            status: '1',
+            channel_id: '1',
+            begin_pubdate: '1',
+            end_pubdate: '1',
+            page: 1,
+            per_page: 10
+         }
+         const res = await getArticleListAPI(param);
+         setList(res);
+         console.log('文章列表：', res);
+      }
+      getList();
+   }, [])
    return (
       <div>
          <Card
@@ -36,7 +126,7 @@ getList();
                   ]} />
             }
             style={{ marginBottom: 20 }}>
-            <Form initialValues={{ status: null }}>
+            <Form initialValues={{ status: null }} onFinish={onFinish}>
                <Form.Item
                   label='状态'
                   name="status">
@@ -65,6 +155,9 @@ getList();
                </Form.Item>
 
             </Form>
+         </Card>
+         <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
+            <Table rowKey='id' columns={columns} dataSource={data} />
          </Card>
       </div>
    )

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using T_Blog.Entity;
 using T_Blog.Interfaces;
 
 namespace T_Blog.Services
@@ -13,7 +14,9 @@ namespace T_Blog.Services
     {
         public BaseService(ISqlSugarClient client) : base(client)
         {
-
+            Context.DbMaintenance.CreateDatabase();
+            Context.CodeFirst.InitTables<Article>();
+            Context.CodeFirst.InitTables<User>();
         }
         public async Task<bool> CreateAsync(T entity)
         {

@@ -45,10 +45,10 @@ namespace T_Blog.WebApi
             {
                 SqlSugarClient sqlSugar = new(new ConnectionConfig()
                 {
-                    ConnectionString = builder.Configuration.GetConnectionString("mysql"),
-                    DbType = SqlSugar.DbType.MySql,
+                    ConnectionString = "Server=localhost;Database=TBlog;Integrated Security=True;",
+                    DbType = SqlSugar.DbType.SqlServer,
                     IsAutoCloseConnection = true
-                });
+                }) ;
                 return sqlSugar;
             });
             builder.Services.AddScoped<IUserService, UserService>();

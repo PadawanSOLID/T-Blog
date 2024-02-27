@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using T_Blog.Entity;
+using T_Blog.Interfaces;
 using T_Blog.WebApi.Models;
 
 namespace T_Blog.WebApi.Controllers
@@ -9,6 +10,10 @@ namespace T_Blog.WebApi.Controllers
     [ApiController]
     public class ArticleController : ControllerBase
     {
+        public List<int> WillNew { get; set; } = new();
+        public List<int> WontNew { get; set; }
+
+
         IEnumerable<Channel> ChannelList { get; set; } = new List<Channel>()
         {
             new(0,"A"),
@@ -29,28 +34,42 @@ namespace T_Blog.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Articles(int status=-1,int channel_id=-1,string begin_pubdate=null,string end_pubdate=null,int page=1,int per_page = 10)
+        public async Task<IActionResult> Articles(string status = null, string channel_id = null, string begin_pubdate = null, string end_pubdate = null, int page = 1, int per_page = 10)
         {
-            
-            return IActionResult<
+            var articles = await _articleService.QueryAllAsync();
+            return Ok(articles);
         }
-        public int Seed = 0;
-        public List<Article> Articles { get; set; } = new();
+
+        private readonly IArticleService _articleService;
+
 
         [HttpPost]
-        public IActionResult Create([FromBody] ArticleData articleData)
+        public async Task<IActionResult> Create([FromBody] ArticleData articleData)
         {
             var article = new Article()
             {
+                Status = 1,
                 Channel_Id = articleData.Channel_Id,
                 Title = articleData.Title,
                 Content = articleData.Content,
                 CoverType = articleData.Cover.Type,
-                Images = articleData.Cover.Images
+                Images = string.Join(";", articleData.Cover.Images),
+                CreateTime = DateTime.Now.ToString(),
             };
-            Articles.Add(article);
-            Seed++;
-            return Ok("Article Created!");
+            var r = await _articleService.CreateAsync(article);
+            if (r)
+            {
+                return Ok("Article Created!");
+            }
+            else
+            {
+                return BadRequest("Failed to create!");
+            }
+
+        }
+        public ArticleController(IArticleService articleService)
+        {
+            this._articleService = articleService;
         }
     }
     public class ArticleData
