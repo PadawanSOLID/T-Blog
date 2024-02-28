@@ -7,10 +7,10 @@ import { getArticleListAPI } from "../../apis/article";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const status={
-   1:<Tag color="warning">待审核</Tag>,
-   2:<Tag color="success">审核通过</Tag>,
-   3:<Tag color='red'>审核失败</Tag>
+const status = {
+   1: <Tag color="warning">待审核</Tag>,
+   2: <Tag color="success">审核通过</Tag>,
+   3: <Tag color='red'>审核失败</Tag>
 }
 const Article = () => {
    const columns = [
@@ -18,13 +18,14 @@ const Article = () => {
          title: '封面',
          dataIndex: 'cover',
          width: 120,
-         render: cover => {return <img alt=""/>
-            // return <img src={cover.images[0]} width={80} height={60} alt="" />
+         render: cover => {
+            return <img />
+            return <img src={cover.images[0] || ""} width={80} height={60} alt="" />
          }
       }, {
-         title:'序号',
-         dataIndex:'id'
-      },{
+         title: '序号',
+         dataIndex: 'id'
+      }, {
          title: '标题',
          dataIndex: 'title',
          width: 220
@@ -57,64 +58,84 @@ const Article = () => {
          }
       }
    ]
-   const data=[
+   const data = [
       {
-         id:'8218',
-         comment_count:0,
-         cover:{
-            iamges:[],
+         id: '8218',
+         comment_count: 0,
+         cover: {
+            iamges: [],
          },
-         like_count:0,
-         pubdate:'2019-03-11 09:00:00',
-         read_count:2,
-         status:2,
-         title:'solution'
-      },{
-         id:'8218',
-         comment_count:0,
-         cover:{
-            iamges:[],
+         like_count: 0,
+         pubdate: '2019-03-11 09:00:00',
+         read_count: 2,
+         status: 2,
+         title: 'solution'
+      }, {
+         id: '8218',
+         comment_count: 0,
+         cover: {
+            iamges: [],
          },
-         like_count:0,
-         pubdate:'2019-03-11 09:00:00',
-         read_count:2,
-         status:1,
-         title:'solution'
-      },{
-         id:'8218',
-         comment_count:0,
-         cover:{
-            iamges:[],
+         like_count: 0,
+         pubdate: '2019-03-11 09:00:00',
+         read_count: 2,
+         status: 1,
+         title: 'solution'
+      }, {
+         id: '8218',
+         comment_count: 0,
+         cover: {
+            iamges: [],
          },
-         like_count:0,
-         pubdate:'2019-03-11 09:00:00',
-         read_count:2,
-         status:3,
-         title:'solution'
+         like_count: 0,
+         pubdate: '2019-03-11 09:00:00',
+         read_count: 2,
+         status: 3,
+         title: 'solution'
       }
    ]
    const onFinish = (formData) => {
-
+      console.log(formData);
+      setReqData({
+         ...reqData,
+         channel_id: formData.channel_id,
+         status: formData.status,
+         begin_pubdate: formData[0].format('YYYY-MM-DD'),
+         end_pubdate: formData[1].format('YYYY-MM-DD'),
+      })
    }
+   const [reqData, setReqData] = useState({
+      status: '',
+      channel_id: '',
+      begin_pubdate: '',
+      end_pubdate: '',
+      page: 1,
+      per_page: 4
+   })
    const { channelList } = useChannel();
    const [list, setList] = useState([])
    const [count, setCount] = useState(0);
    useEffect(() => {
       const getList = async () => {
-         const param = {
-            status: '1',
-            channel_id: '1',
-            begin_pubdate: '1',
-            end_pubdate: '1',
-            page: 1,
-            per_page: 10
-         }
-         const res = await getArticleListAPI(param);
-         setList(res);
-         console.log('文章列表：', res);
+         const res = await getArticleListAPI(reqData);
+         console.log(res);
+         const data= res.map(res=>{
+            const { id, comment_count, like_count, pubdate, read_count, status, title, covers } = res;
+            const data = {
+               id, comment_count, like_count, pubdate, read_count, status, title,
+               covers:covers? covers.split(';'):[]
+            }
+            return data;
+         })
+         console.log(data);
+         setList(data);
+      
+         setCount(3);
+
       }
       getList();
-   }, [])
+
+   }, [reqData])
    return (
       <div>
          <Card
@@ -157,7 +178,7 @@ const Article = () => {
             </Form>
          </Card>
          <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-            <Table rowKey='id' columns={columns} dataSource={data} />
+            <Table rowKey='id' columns={columns} dataSource={list} />
          </Card>
       </div>
    )

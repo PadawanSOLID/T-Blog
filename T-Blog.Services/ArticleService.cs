@@ -13,6 +13,9 @@ namespace T_Blog.Services
     {
         public ArticleService(ISqlSugarClient client) : base(client)
         {
+           
         }
+
+        public ISqlSugarClient Context { get { return Context; }  }
     }
 }

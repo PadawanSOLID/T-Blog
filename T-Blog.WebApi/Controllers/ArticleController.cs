@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SqlSugar;
 using T_Blog.Entity;
 using T_Blog.Interfaces;
 using T_Blog.WebApi.Models;
@@ -34,14 +35,21 @@ namespace T_Blog.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Articles(string status = null, string channel_id = null, string begin_pubdate = null, string end_pubdate = null, int page = 1, int per_page = 10)
+        public async Task<IActionResult> Articles(string status = null, string channel_id = null, string begin_pubdate = null, string end_pubdate = null, int page = 1, int per_page = 4)
         {
-            var articles = await _articleService.QueryAllAsync();
-            return Ok(articles);
+           // var a =await _articleService.QueryAllAsync();
+            var query = sqlSugarClient.Queryable<Article>()
+             .WhereIF(status != null, n => n.Status == int.Parse(status))
+             .WhereIF(channel_id != null, n => n.Channel_Id == int.Parse(channel_id))
+             .WhereIF(begin_pubdate != null, n => DateTime.Parse(n.CreateTime) > DateTime.Parse(begin_pubdate))
+             .WhereIF(end_pubdate != null, n => DateTime.Parse(n.CreateTime) > DateTime.Parse(end_pubdate)).ToPageList(page, per_page); 
+
+            return Ok(query);
         }
+    
 
         private readonly IArticleService _articleService;
-
+        private readonly ISqlSugarClient sqlSugarClient;
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ArticleData articleData)
@@ -67,9 +75,10 @@ namespace T_Blog.WebApi.Controllers
             }
 
         }
-        public ArticleController(IArticleService articleService)
+        public ArticleController(IArticleService articleService,ISqlSugarClient sqlSugarClient)
         {
             this._articleService = articleService;
+            this.sqlSugarClient = sqlSugarClient;
         }
     }
     public class ArticleData
